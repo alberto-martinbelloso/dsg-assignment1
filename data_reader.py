@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 
 
 def get_data(file):
@@ -6,6 +7,8 @@ def get_data(file):
     if file == "fifa.csv" or file == "telecom_churn.csv":
         data = pd.read_csv(path, sep=",", index_col=False)
     else:
-        data = pd.read_json(path)
+        with open(path) as f:
+            data = json.load(f)
+        # data = pd.read_json(path)
 
     return data
