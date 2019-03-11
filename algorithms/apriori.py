@@ -10,6 +10,7 @@ def apriori(data_raw):
     data, features_names = get_onehot_matrix(data_raw)
 
     min_support = 0.3
+    min_confidence = 0.3
 
     support = []
     for i in range(data.shape[1]):
@@ -19,6 +20,8 @@ def apriori(data_raw):
     res_df = find_right_sets(data, support, min_support)
     for i in range(37, len(res_df)):
         print([features_names[i] for i in res_df.itemsets[i]], '\t has support {:.4f}'.format(res_df.support[i]))
+
+    return res_df
 
 
 def get_onehot_matrix(data_raw):
@@ -50,23 +53,12 @@ def get_onehot_matrix(data_raw):
 
 
 def compute_support(X, combi):
-    """ Given a one-hot array X, and a tuple, combi, indicating the columns of interest
-        compute_support returns the support of the elements in combi.
-
-        The support of an item set X is the proportion of observations in the dataset where X occurs.
-        $supp(X) = \frac{\text{# observations with X}}{\text{Total # transactions}}$
-    """
     rule = X[:, combi].all(axis=1)
     support = rule.sum() / X.shape[0]
     return support
 
 
 def candidate_generation(old_combinations):
-    """ Input: An NxM array of item sets,
-            N: number of combinations
-            M: length of each item set
-        Output: A generator that produces all possible combinations
-    """
 
     items_types_in_previous_step = np.unique(old_combinations.flatten())
 
@@ -122,6 +114,29 @@ def find_right_sets(data, support, min_support):
     res_df = res_df.reset_index(drop=True)
 
     return res_df
+
+
+def compute_confidence():
+    """ The confidence for `X->Y` is the likelihood that `Y` is purchased, if `X` is purchased.
+        This is the same as the conditional probability.
+        $conf(X \rightarrow Y) = \frac{supp(X \cup Y)}{supp(X)}$
+    """
+    pass
+
+
+def compute_lift():
+    """
+        $lift(X\rightarrow Y) = \frac{supp(X \cup Y)}{supp(X) supp(Y)}$
+    """
+    pass
+
+
+def compute_conviction():
+    """ How much better than chance is this association?
+
+        $conv(X \rightarrow Y) = \frac{1-supp(Y)}{1-conf(X->Y)}$
+    """
+    pass
 
 
 def plot_data(features_names, support):
