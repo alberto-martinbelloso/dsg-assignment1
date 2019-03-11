@@ -10,6 +10,7 @@ def apriori(data_raw):
     data, features_names = get_onehot_matrix(data_raw)
 
     min_support = 0.3
+    min_confidence = 0.3
 
     support = []
     for i in range(data.shape[1]):
