@@ -8,7 +8,7 @@ def main():
     shopping_data = get_data("shopping.json")
     telecom_data = get_data("telecom_churn.csv")
 
-    apriori(fifa_data)
+    apriori(shopping_data)
 
 
 if __name__ == "__main__":
