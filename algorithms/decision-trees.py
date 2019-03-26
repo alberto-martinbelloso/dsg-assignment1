@@ -2,25 +2,6 @@
 import numpy as np
 from sklearn import datasets
 
-def unique_vals(rows, col):
-    """Find the unique values for a column in a dataset."""
-    return set([row[col] for row in rows])
-
-def class_counts(rows):
-    """Counts the number of each type of example in a dataset."""
-    counts = {}  # a dictionary of label -> count.
-    for row in rows:
-        # in our dataset format, the label is always the last column
-        label = row[-1]
-        if label not in counts:
-            counts[label] = 0
-        counts[label] += 1
-    return counts
-
-def is_numeric(value):
-    """Test if a value is numeric."""
-    return isinstance(value, int) or isinstance(value, float)
-
 class Question:
     """A Question is used to partition a dataset.
     This class just records a 'column number' (e.g., 0 for Color) and a
@@ -54,6 +35,50 @@ class Question:
         return "Is %s %s %s?" % (
             iris.feature_names[self.column], condition, str(self.value))
 
+
+class Leaf_Node:
+    """A Leaf node classifies data.
+    This holds a dictionary of class (e.g., "Apple") -> number of times
+    it appears in the rows from the training data that reach this leaf.
+    """
+
+    def __init__(self, rows):
+        self.predictions = class_counts(rows)
+
+
+class Decision_Node:
+    """A Decision Node asks a question.
+    This holds a reference to the question, and to the two child nodes.
+    """
+
+    def __init__(self,
+                 question,
+                 true_branch,
+                 false_branch):
+        self.question = question
+        self.true_branch = true_branch
+        self.false_branch = false_branch
+
+
+
+def unique_vals(rows, col):
+    """Find the unique values for a column in a dataset."""
+    return set([row[col] for row in rows])
+
+def class_counts(rows):
+    """Counts the number of each type of example in a dataset."""
+    counts = {}  # a dictionary of label -> count.
+    for row in rows:
+        # in our dataset format, the label is always the last column
+        label = row[-1]
+        if label not in counts:
+            counts[label] = 0
+        counts[label] += 1
+    return counts
+
+def is_numeric(value):
+    """Test if a value is numeric."""
+    return isinstance(value, int) or isinstance(value, float)
 
 def partition(rows, question):
     """Partitions a dataset.
@@ -125,30 +150,6 @@ def find_best_split(rows):
 
     return best_gain, best_question
 
-class Leaf_Node:
-    """A Leaf node classifies data.
-    This holds a dictionary of class (e.g., "Apple") -> number of times
-    it appears in the rows from the training data that reach this leaf.
-    """
-
-    def __init__(self, rows):
-        self.predictions = class_counts(rows)
-
-
-class Decision_Node:
-    """A Decision Node asks a question.
-    This holds a reference to the question, and to the two child nodes.
-    """
-
-    def __init__(self,
-                 question,
-                 true_branch,
-                 false_branch):
-        self.question = question
-        self.true_branch = true_branch
-        self.false_branch = false_branch
-
-
 def build_tree(rows):
     """Builds the tree.
     Rules of recursion: 1) Believe that it works. 2) Start by checking
@@ -207,7 +208,6 @@ def print_tree(node, spacing=""):
 def classify(row, node, verbose=False):
     """ Recursively search
     """
-    
     if isinstance(node, Leaf_Node):
         return node.predictions
     
