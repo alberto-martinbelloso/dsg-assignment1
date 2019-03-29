@@ -9,6 +9,5 @@ def get_data(file):
     else:
         with open(path) as f:
             data = json.load(f)
-        # data = pd.read_json(path)
 
     return data

@@ -4,19 +4,24 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def main():
-    fifa_data = get_data("fifa.csv")
-    shopping_data = get_data("shopping.json")
-    telecom_data = get_data("telecom_churn.csv")
+def run_algorithm(algorithm):
 
+    if algorithm == 'apriori':
+        data = get_data("shopping.json")
+        apriori_result = apriori(data, 0.3, 0.5)
+        apriori_result = apriori_result.sort_values(by=['ir'], ascending=[True])
+
+        plt.show(apriori_result.query('ir > 0.0')
+                 .plot(kind='bar', x='rule', y=['ir', 'kulczynski'], rot=45, fontsize=6))
+
+        print(apriori_result)
+
+
+def main():
     pd.set_option('display.max_columns', None)
     pd.set_option('display.width', 300)
 
-    apriori_result = apriori(shopping_data, 0.15, 0.3)
-    apriori_result = apriori_result.sort_values(by=['ir'], ascending=[True])
-
-    plt.show(apriori_result.query('ir > 0.0')
-             .plot(kind='bar', x='rule', y=['ir', 'kulczynski'], rot=45, fontsize=6))
+    run_algorithm('apriori')
 
 
 if __name__ == "__main__":
