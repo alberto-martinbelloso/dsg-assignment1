@@ -1,4 +1,3 @@
-## Load the data
 import os
 import sys, getopt
 import numpy as np
@@ -12,6 +11,7 @@ feature_names = []
 target_names = []
 header = []
 method = "gini"
+
 
 class Question:
     def __init__(self, column, value):
@@ -54,23 +54,21 @@ class Decision_Node:
     This holds a reference to the question, and to the two child nodes.
     """
 
-    def __init__(self,
-                 question,
-                 true_branch,
-                 false_branch):
+    def __init__(self, question, true_branch, false_branch):
         self.question = question
         self.true_branch = true_branch
         self.false_branch = false_branch
-
 
 
 def is_numeric(value):
     """Test if a value is numeric."""
     return isinstance(value, int) or isinstance(value, float)
 
+
 def unique_vals(rows, col):
     """Find the unique values for a column in a dataset."""
     return set([row[col] for row in rows])
+
 
 def class_counts(rows):
     """Counts the number of each type of example in a dataset."""
@@ -97,6 +95,7 @@ def partition(rows, question):
             false_rows.append(row)
     return true_rows, false_rows
 
+
 def entropy(rows):
 
     counts = class_counts(rows)
@@ -105,6 +104,7 @@ def entropy(rows):
         prob_of_lbl = counts[lbl] / float(len(rows))
         impurity -= prob_of_lbl * np.log2(prob_of_lbl)
     return impurity
+
 
 def gini(rows):
     """Calculate the Gini Impurity for a list of rows.
@@ -170,6 +170,7 @@ def find_best_split(rows):
                 best_gain, best_question = gain, question
 
     return best_gain, best_question
+
 
 def build_tree(rows):
     """Builds the tree.
@@ -262,6 +263,7 @@ def evaluate(my_tree, data_test):
             if verbose: print("Wrong prediction. Actual: %s. Predicted: %s" % (row[-1], print_leaf(pred)))
     return acc/data_test.shape[0]
 
+
 def prepare_data(loadFromFile, inputFile):
     global header
     global feature_names
@@ -293,6 +295,7 @@ def prepare_data(loadFromFile, inputFile):
         target_names = iris.target_names
     return data
 
+
 def partition_data(data):
     step_len = 10
     data_test = data[::step_len,:]
@@ -311,6 +314,7 @@ def partition_data(data):
 
     return data_train, data_test
 
+
 def main(argv):
     start = time.time()
     validation = False
@@ -318,7 +322,6 @@ def main(argv):
     inputFile = ''
     global verbose
     global method
-    
 
     try:
         opts, _ = getopt.getopt(argv, "hHvc:m:i:", ['help', 'verbose', 'method', 'input', 'validation'])
@@ -357,7 +360,7 @@ def main(argv):
                 sys.exit(2)
 
     data = prepare_data(loadFromFile, inputFile)
-    #k-Fold cross-validation.
+    # k-Fold cross-validation.
     if validation:
         kf = model_selection.KFold(n_split, True)
         acc = []
@@ -373,8 +376,7 @@ def main(argv):
         my_tree = build_tree(data_train)
         if verbose: print_tree(my_tree)
         print("Accuracy: %s" % (evaluate(my_tree, data_test)))
-    
-    
+
     print("Finished execution in: %s" % (time.time() - start))
 
 

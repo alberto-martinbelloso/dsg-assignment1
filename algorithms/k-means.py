@@ -1,39 +1,17 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# # Mandatory assignment - Data Science in Games
-# Implementation of K-Means algorithm by Rasmus Emil Odgaard
-# 
-
-# ## Import libraries
-
-# In[1]:
-
-
-get_ipython().run_line_magic('matplotlib', 'inline')
-
 import os
 import numpy as np
 import pandas as pd
-from sklearn import preprocessing
-
-#For plotting
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import silhouette_samples, silhouette_score
 import matplotlib.cm as cm
 
 
-# ## Load data
-
-# In[49]:
-
-
-basedir = "./"
+basedir = "../"
 file = "fifa.csv"
-assert os.path.isdir(f"{basedir}data") and os.path.exists(f"{basedir}data/{file}"), 'Data not found. Make sure to have the most recent version!'
+assert os.path.isdir(basedir+'data') and os.path.exists(basedir+'data/'+file), 'Data not found!'
 
-data = pd.read_csv(f'{basedir}/data/fifa.csv', sep=",")
+data = pd.read_csv(basedir+'/data/fifa.csv', sep=",")
 
 all_features = ['Crossing','Finishing','HeadingAccuracy','ShortPassing','Volleys','Dribbling','Curve','FKAccuracy','LongPassing',
             'BallControl','Acceleration','SprintSpeed','Agility','Reactions','Balance','ShotPower','Jumping','Stamina',
@@ -44,21 +22,11 @@ features = ['Finishing','SlidingTackle']
 data = data.dropna(subset=features)
 
 
-
-# ## K-Means algorithm
-
-# In[50]:
-
-
 def k_means_clustering(data, k, max_iter=300):
     iter = -1
     features = list(data)
     centroids = np.random.rand(k,len(features))*100
-    clust_data = data.copy()    
-
-    #for i in range (0,len(features)):
-    #    clust_data=(clust_data-clust_data.min())/(clust_data.max()-clust_data.min())
-            
+    clust_data = data.copy()
     clust_data = clust_data.to_numpy()
                 
     for i in range (0,max_iter):
@@ -90,17 +58,9 @@ def k_means_clustering(data, k, max_iter=300):
     return data, centroids
 
 
-# In[69]:
-
-
 K = 5
 
 new_data, new_centroids = k_means_clustering(data[features].head(1000),K)
-
-
-# ## Plotting
-
-# In[70]:
 
 
 def silhouette(X,cluster_labels,n_clusters, centroids,features):
@@ -183,17 +143,7 @@ def silhouette(X,cluster_labels,n_clusters, centroids,features):
     plt.show()
 
 
-# In[71]:
-
-
 data_points = new_data.loc[:, features].to_numpy()
 data_labels = new_data.loc[:,'Centroid'].to_numpy()
 sns.pairplot(new_data, vars=features, hue='Centroid')
 silhouette(data_points, data_labels, K, new_centroids, list(new_data))
-
-
-# In[ ]:
-
-
-
-
